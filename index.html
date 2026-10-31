@@ -2,11 +2,20 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>RSI - Report Sistem Integrasi</title>
-  
+
   <!-- FAVICON/LOGO TAB BROWSER -->
   <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1ZadY4U04rLMZxmgSKJndVWlqaiNKf7m8">
+
+  <!-- PWA: supaya bisa di-install di HP -->
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="RSI">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,6 +25,15 @@
 </head>
 <body>
   <!-- LINK EXEC WEB APP STANDALONE TERBARU -->
-  <iframe src="https://script.google.com/macros/s/AKfycbwTlScGk5Ybzu7BPEsv2HFmmP4QQfIU8Jm6-dc8qcdpcpO8-4FDYLnl1cHrClocNER6/exec"></iframe>
+  <iframe src="https://script.google.com/macros/s/AKfycbwTlScGk5Ybzu7BPEsv2HFmmP4QQfIU8Jm6-dc8qcdpcpO8-4FDYLnl1cHrClocNER6/exec"
+          allow="clipboard-write; fullscreen; geolocation; camera; microphone"></iframe>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js').catch(function (e) { console.warn('SW gagal:', e); });
+      });
+    }
+  </script>
 </body>
 </html>
