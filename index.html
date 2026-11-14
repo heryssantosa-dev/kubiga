@@ -10,7 +10,7 @@
 
   <!-- PWA: supaya bisa di-install di HP -->
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#047857">
+  <meta name="theme-color" content="#0f172a">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="RSI">
@@ -19,16 +19,8 @@
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    /* Latar = hijau header aplikasi (#047857): area status bar / notch iPhone menyatu dengan header, tidak ada pita gelap. */
-    html, body { width: 100%; height: 100%; overflow: hidden; background-color: #047857; overscroll-behavior: none; }
-    /* iframe dipasang FIXED dari bawah layar sampai tepat di bawah area aman atas (status bar / notch).
-       Sebelumnya height:100% di iOS sering lebih pendek dari layar sehingga muncul pita gelap di bawah menu bawah,
-       dan header aplikasi tertimpa status bar. Insets aman bawah (home bar) ditangani menu bawah di dalam aplikasi. */
-    iframe {
-      position: fixed; left: 0; right: 0; bottom: 0;
-      top: env(safe-area-inset-top, 0px);
-      width: 100%; height: auto; border: none; display: block; background: #f1f5f9;
-    }
+    html, body { width: 100%; height: 100%; overflow: hidden; background-color: #0f172a; }
+    iframe { width: 100%; height: 100%; border: none; display: block; }
 
     /* LAYAR LOADING */
     #loader {
