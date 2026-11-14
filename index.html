@@ -19,8 +19,10 @@
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    /* Latar = hijau header aplikasi (#047857): area status bar / notch iPhone menyatu dengan header. */
-    html, body { width: 100%; height: 100%; overflow: hidden; background-color: #047857; overscroll-behavior: none; }
+    /* Latar = warna menu bawah aplikasi (terang #fff / gelap #0f172a). Kalau di iPhone PWA masih tersisa celah di bawah iframe,
+       celah itu menyatu dengan menu bawah (bukan pita hijau). Bagian atas selalu tertutup header aplikasi yang hijau. */
+    html, body { width: 100%; height: 100%; overflow: hidden; background-color: #ffffff; overscroll-behavior: none; }
+    @media (prefers-color-scheme: dark) { html, body { background-color: #0f172a; } }
     /* #shell = penuh layar (kiri/kanan/atas/bawah = 0). iframe mengisi 100% #shell, jadi tingginya mengikuti #shell
        (bukan satuan vh/dvh yang di iPhone PWA bisa lebih pendek dari layar -> muncul pita di bawah).
        Atas TIDAK digeser: header aplikasi sudah menambah jarak status bar sendiri (env safe-area-inset-top) di dalam iframe;
@@ -46,6 +48,12 @@
     }
     @keyframes slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
     #loader p { font: 12px/1.4 system-ui, sans-serif; color: #64748b; }
+    /* TAB BARU / refresh di halaman tertentu: tanpa logo & tulisan, hanya latar polos + garis kemajuan tipis di atas */
+    #loader.quiet { background: #f1f5f9; justify-content: flex-start; align-items: stretch; gap: 0; }
+    @media (prefers-color-scheme: dark) { #loader.quiet { background: #0f172a; } }
+    #loader.quiet img, #loader.quiet p { display: none; }
+    #loader.quiet .bar { width: 100%; height: 3px; border-radius: 0; background: transparent; }
+    #loader.quiet .bar::after { background: #10b981; }
   </style>
 </head>
 <body>
@@ -69,6 +77,7 @@
       // 1) Halaman tujuan: #halaman (keadaan terbaru) diutamakan, lalu ?page=
       var p = clean(location.hash) || clean(new URLSearchParams(location.search).get('page'));
       f.src = APP_URL + (p ? '?page=' + encodeURIComponent(p) : '');
+      if (p) document.getElementById('loader').classList.add('quiet');   // tab baru: loading polos tanpa logo
 
       // 2) Pesan dari aplikasi: perbarui alamat luar, dan jawab alamat pembungkus
       window.addEventListener('message', function (e) {
@@ -90,20 +99,23 @@
   </script>
 
   <script>
-    // iPhone PWA (Tambah ke Layar Utama): tinggi layout kadang lebih pendek dari layar fisik -> pita di bawah menu.
-    // Perpanjang #shell sampai setinggi layar fisik. Browser biasa / Android tidak terpengaruh.
+    // iPhone PWA (Tambah ke Layar Utama): tinggi layout (innerHeight) kadang lebih pendek dari layar fisik -> celah di bawah menu.
+    // Coba minta viewport setinggi layar (device-height) HANYA di mode PWA iPhone; browser biasa / Android tidak disentuh.
     (function () {
       var shell = document.getElementById('shell');
+      var meta = document.querySelector('meta[name="viewport"]');
+      var tried = false;
       function fit() {
-        var extra = 0;
         try {
-          if (navigator.standalone === true) {
+          if (!tried && navigator.standalone === true && meta) {
             var land = window.innerWidth > window.innerHeight;
             var full = land ? Math.min(screen.width, screen.height) : Math.max(screen.width, screen.height);
-            if (full > window.innerHeight + 1) extra = full - window.innerHeight;
+            if (full > window.innerHeight + 1) {
+              tried = true;
+              meta.setAttribute('content', meta.getAttribute('content') + ', height=device-height');
+            }
           }
         } catch (e) {}
-        shell.style.bottom = extra ? ('-' + extra + 'px') : '0';
         dbg();
       }
       function probe(side) {
