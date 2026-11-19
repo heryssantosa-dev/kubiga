@@ -28,7 +28,8 @@
        Atas TIDAK digeser: header aplikasi sudah menambah jarak status bar sendiri (env safe-area-inset-top) di dalam iframe;
        menggeser lagi dari sini membuat jaraknya terhitung 2x (header hijau terlalu tinggi). */
     #shell { position: fixed; left: 0; right: 0; top: 0; bottom: 0; }
-    #shell iframe { display: block; width: 100%; height: 100%; border: none; background: #047857; }
+    #shell iframe { display: block; width: 100%; height: 100%; border: none; background: #ffffff; }
+    @media (prefers-color-scheme: dark) { #shell iframe { background: #0f172a; } }
     #dbg { display: none; position: fixed; z-index: 99; left: 6px; top: 70px; max-width: 92vw; padding: 6px 8px; border-radius: 8px;
            background: rgba(0,0,0,.82); color: #a7f3d0; font: 11px/1.45 ui-monospace, monospace; white-space: pre-wrap; }
 
