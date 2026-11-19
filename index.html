@@ -87,6 +87,11 @@
         var host; try { host = new URL(e.origin).hostname; } catch (x) { return; }
         if (host !== 'script.google.com' && !/\.googleusercontent\.com$/.test(host)) return;   // hanya dari aplikasi Google Apps Script
 
+        if (d.rsi === 'bg' && /^#[0-9a-f]{6}$/i.test(d.c || '')) {
+          document.documentElement.style.backgroundColor = d.c; document.body.style.backgroundColor = d.c;
+          var fr = document.getElementById('app'); if (fr) fr.style.background = d.c;
+          return;
+        }
         if (d.rsi === 'page') {
           var k = clean(d.page);
           var sp = new URLSearchParams(location.search); sp.delete('page');
@@ -116,6 +121,13 @@
               meta.setAttribute('content', meta.getAttribute('content') + ', height=device-height');
             }
           }
+          // Layar fisik lebih tinggi dari #shell (celah kosong di bawah menu): paksa #shell setinggi layar fisik
+          if (navigator.standalone === true) {
+            var land2 = window.innerWidth > window.innerHeight;
+            var full2 = land2 ? Math.min(screen.width, screen.height) : Math.max(screen.width, screen.height);
+            var h = Math.round(shell.getBoundingClientRect().height);
+            if (full2 > h + 1) { shell.style.bottom = 'auto'; shell.style.height = full2 + 'px'; }
+          }
         } catch (e) {}
         dbg();
       }
@@ -138,7 +150,7 @@
       }
       box.addEventListener('click', function () { box.style.display = 'none'; on = false; });
       window.addEventListener('resize', fit); window.addEventListener('orientationchange', function () { setTimeout(fit, 300); });
-      fit(); setTimeout(fit, 500);
+      fit(); setTimeout(fit, 500); setTimeout(fit, 1500);
     })();
   </script>
 
