@@ -78,7 +78,7 @@
       // 1) Halaman tujuan: #halaman (keadaan terbaru) diutamakan, lalu ?page=
       var p = clean(location.hash) || clean(new URLSearchParams(location.search).get('page'));
       f.src = APP_URL + (p ? '?page=' + encodeURIComponent(p) : '');
-      if (p) document.getElementById('loader').classList.add('quiet');   // tab baru: loading polos tanpa logo
+      if (p || !(window.matchMedia && window.matchMedia('(max-width: 767px)').matches)) document.getElementById('loader').classList.add('quiet');   // tab baru: loading polos tanpa logo
 
       // 2) Pesan dari aplikasi: perbarui alamat luar, dan jawab alamat pembungkus
       window.addEventListener('message', function (e) {
