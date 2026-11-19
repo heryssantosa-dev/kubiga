@@ -173,8 +173,8 @@
         if (host !== 'script.google.com' && !/\.googleusercontent\.com$/.test(host)) return;
         closeOnce(100);
       });
-      document.getElementById('app').addEventListener('load', function () { setTimeout(function () { closeOnce(0); }, 12000); });
-      setTimeout(function () { closeOnce(0); }, 30000);
+      document.getElementById('app').addEventListener('load', function () { setTimeout(function () { closeOnce(0); }, 3000); });
+      setTimeout(function () { closeOnce(0); }, 15000);
     })();
 
     if ('serviceWorker' in navigator) {
