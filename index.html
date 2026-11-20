@@ -103,6 +103,9 @@
           var sp = new URLSearchParams(location.search); sp.delete('page');
           var qs = sp.toString();
           history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '') + (k ? '#' + k : ''));
+                } else if (d.rsi === 'title') {
+          var t = String(d.title || '').replace(/[\r\n]+/g, ' ').slice(0, 120);
+          if (t) document.title = t;
         } else if (d.rsi === 'where' && e.source) {
           e.source.postMessage({ rsi: 'where', href: location.href }, e.origin);
         }
