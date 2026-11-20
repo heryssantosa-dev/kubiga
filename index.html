@@ -28,6 +28,12 @@
        Atas TIDAK digeser: header aplikasi sudah menambah jarak status bar sendiri (env safe-area-inset-top) di dalam iframe;
        menggeser lagi dari sini membuat jaraknya terhitung 2x (header hijau terlalu tinggi). */
     #shell { position: fixed; left: 0; right: 0; top: 0; bottom: 0; }
+    /* iPhone PWA (layar utama): tinggi 100% / innerHeight sering lebih pendek ~100px dari layar fisik -> celah putih di bawah menu & modal terpotong.
+       Di mode standalone pakai satuan tinggi layar penuh (lvh / vh), bukan 100%. Browser biasa & Android tidak terpengaruh (khusus iOS + standalone; Android tidak disentuh agar keyboard tetap menyusutkan layar). */
+    @supports (-webkit-touch-callout: none) { @media (display-mode: standalone) {
+      html, body { height: 100vh; height: 100lvh; }
+      #shell { bottom: auto; height: 100vh; height: 100lvh; }
+    } }
     #shell iframe { display: block; width: 100%; height: 100%; border: none; background: #ffffff; }
     @media (prefers-color-scheme: dark) { #shell iframe { background: #0f172a; } }
     #dbg { display: none; position: fixed; z-index: 99; left: 6px; top: 70px; max-width: 92vw; padding: 6px 8px; border-radius: 8px;
