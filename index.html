@@ -6,7 +6,11 @@
   <title>RSI - Report Sistem Integrasi</title>
 
   <!-- FAVICON/LOGO TAB BROWSER -->
-  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png?v=2">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=3">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png?v=3">
+
+  <!-- Siapkan koneksi ke Google lebih awal (loading lebih cepat) -->
+  <link rel="preconnect" href="https://script.google.com">
 
   <!-- PWA: supaya bisa di-install di HP -->
   <link rel="manifest" href="/manifest.webmanifest">
@@ -15,7 +19,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="RSI">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=3">
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -55,11 +59,12 @@
     }
     @keyframes slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
     #loader p { font: 12px/1.4 system-ui, sans-serif; color: #a7f3d0; }
-    /* TAB BARU / refresh di halaman tertentu: tanpa logo & tulisan, hanya latar polos + garis kemajuan tipis di atas */
-    #loader.quiet { background: #f1f5f9; justify-content: flex-start; align-items: stretch; gap: 0; }
+    /* TAB BARU / refresh di halaman tertentu: latar terang + logo RSI (di kartu putih) + garis loading + tulisan "Memuat aplikasi..." */
+    #loader.quiet { background: #f1f5f9; justify-content: center; align-items: center; gap: 20px; }
     @media (prefers-color-scheme: dark) { #loader.quiet { background: #0f172a; } }
-    #loader.quiet img, #loader.quiet p { display: none; }
-    #loader.quiet .bar { width: 100%; height: 3px; border-radius: 0; background: transparent; }
+    #loader.quiet img { display: block; width: min(44vw, 200px); padding: 14px 20px; background: #ffffff; border-radius: 20px; box-shadow: 0 6px 24px rgba(15,23,42,.12); }
+    #loader.quiet p { display: block; color: #64748b; }
+    #loader.quiet .bar { width: min(40vw, 160px); height: 3px; border-radius: 3px; background: rgba(4,120,87,.18); }
     #loader.quiet .bar::after { background: #10b981; }
   </style>
 </head>
@@ -84,7 +89,13 @@
       // 1) Halaman tujuan: #halaman (keadaan terbaru) diutamakan, lalu ?page=
       var p = clean(location.hash) || clean(new URLSearchParams(location.search).get('page'));
       f.src = APP_URL + (p ? '?page=' + encodeURIComponent(p) : '');
-      if (p || !(window.matchMedia && window.matchMedia('(max-width: 767px)').matches)) document.getElementById('loader').classList.add('quiet');   // tab baru: loading polos tanpa logo
+      // Desktop / tab baru / refresh di halaman tertentu: loading terang dengan logo RSI hijau (di kartu putih) + garis loading
+      if (p || !(window.matchMedia && window.matchMedia('(max-width: 767px)').matches)) {
+        var ld = document.getElementById('loader');
+        ld.classList.add('quiet');
+        var li = ld.querySelector('img');
+        if (li) li.src = '/icons/logo-login.png';
+      }
 
       // 2) Pesan dari aplikasi: perbarui alamat luar, dan jawab alamat pembungkus
       window.addEventListener('message', function (e) {
@@ -103,7 +114,7 @@
           var sp = new URLSearchParams(location.search); sp.delete('page');
           var qs = sp.toString();
           history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '') + (k ? '#' + k : ''));
-                } else if (d.rsi === 'title') {
+        } else if (d.rsi === 'title') {
           var t = String(d.title || '').replace(/[\r\n]+/g, ' ').slice(0, 120);
           if (t) document.title = t;
         } else if (d.rsi === 'where' && e.source) {
