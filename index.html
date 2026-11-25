@@ -114,29 +114,42 @@
     }
     @media (max-height: 600px) { #ld-mock .ld-phone svg { height: 26vh; } }
     #loader.ld-plain #ld-hero, #loader.ld-plain #ld-mock { display: none; }   /* tanpa halaman tujuan (login/refresh): hanya latar + logo + bar */
-    /* LOGO TENGAH (hanya mode login/tanpa halaman tujuan): napas pelan + cahaya berdenyut + kilau menyapu logo */
-    #ld-center { display: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -58%); }
+    /* LOGO TENGAH (mode login/tanpa halaman tujuan): huruf R, S, I "ditulis" bergantian, titik kuning muncul, lalu kilau menyapu; ulang tiap 4,6 detik */
+    #ld-center { display: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -58%); height: clamp(76px, 12vh, 112px); aspect-ratio: 2.7584; }
     #loader.ld-plain #ld-center { display: block; }
     #loader.ld-plain #ld-logo, #loader.ld-plain #ld-logo-w { display: none !important; }
-    #ld-center img { display: block; position: relative; height: clamp(76px, 12vh, 112px); width: auto; animation: ldbreath 2.4s ease-in-out infinite; }
-    #ld-center #ld-clogo-w { display: none; }
-    #ld-center::before { content: ""; position: absolute; left: 50%; top: 50%; width: 190%; height: 280%; transform: translate(-50%, -50%); background: radial-gradient(closest-side, rgba(16,185,129,.30), transparent 70%); animation: ldglow 2.4s ease-in-out infinite; pointer-events: none; }
+    #ld-center .ld-set { position: absolute; inset: 0; }
+    #ld-center .ld-set-w { display: none; }
+    #ld-center .ld-ch { position: absolute; display: block; height: auto; }
+    #ld-center .ld-r { animation: ldwR 4.6s ease-in-out infinite; }
+    #ld-center .ld-s { animation: ldwS 4.6s ease-in-out infinite; }
+    #ld-center .ld-i { animation: ldwI 4.6s ease-in-out infinite; }
+    #ld-center .ld-dot { transform-origin: 50% 50%; animation: ldwD 4.6s ease-in-out infinite; }
+    #ld-center .ld-full { display: none; position: absolute; inset: 0; width: 100%; height: 100%; }
+    #ld-center.ld-fallback .ld-set, #ld-center.ld-fallback .ld-dot { display: none !important; }
+    #ld-center.ld-fallback #ld-clogo { display: block; }
+    @keyframes ldwR { 0%, 3% { clip-path: polygon(0 0, 0 0, -16% 100%, 0 100%); opacity: 1; } 19% { clip-path: polygon(0 0, 116% 0, 100% 100%, 0 100%); opacity: 1; } 84% { clip-path: polygon(0 0, 116% 0, 100% 100%, 0 100%); opacity: 1; } 94%, 100% { clip-path: polygon(0 0, 116% 0, 100% 100%, 0 100%); opacity: 0; } }
+    @keyframes ldwS { 0%, 19% { clip-path: polygon(0 0, 0 0, -16% 100%, 0 100%); opacity: 1; } 34% { clip-path: polygon(0 0, 116% 0, 100% 100%, 0 100%); opacity: 1; } 84% { clip-path: polygon(0 0, 116% 0, 100% 100%, 0 100%); opacity: 1; } 94%, 100% { clip-path: polygon(0 0, 116% 0, 100% 100%, 0 100%); opacity: 0; } }
+    @keyframes ldwI { 0%, 34% { clip-path: polygon(0 0, 0 0, -16% 100%, 0 100%); opacity: 1; } 44% { clip-path: polygon(0 0, 116% 0, 100% 100%, 0 100%); opacity: 1; } 84% { clip-path: polygon(0 0, 116% 0, 100% 100%, 0 100%); opacity: 1; } 94%, 100% { clip-path: polygon(0 0, 116% 0, 100% 100%, 0 100%); opacity: 0; } }
+    @keyframes ldwD { 0%, 44% { transform: scale(0); opacity: 0; } 48% { transform: scale(1.3); opacity: 1; } 51% { transform: scale(1); opacity: 1; } 84% { transform: scale(1); opacity: 1; } 94%, 100% { transform: scale(1); opacity: 0; } }
+    #ld-center::before { content: ""; position: absolute; left: 50%; top: 50%; width: 190%; height: 280%; transform: translate(-50%, -50%); background: radial-gradient(closest-side, rgba(16,185,129,.30), transparent 70%); animation: ldglow 4.6s ease-in-out infinite; pointer-events: none; }
     #ld-center::after { content: ""; position: absolute; inset: 0; pointer-events: none;
       background: linear-gradient(110deg, transparent 38%, rgba(255,255,255,.95) 50%, transparent 62%) 150% 0 / 250% 100% no-repeat;
       -webkit-mask: url(/icons/logo-login.png) center / contain no-repeat; mask: url(/icons/logo-login.png) center / contain no-repeat;
-      animation: ldshine 2.4s ease-in-out infinite; }
-    @keyframes ldbreath { 0%, 100% { transform: scale(1); opacity: .88; } 50% { transform: scale(1.05); opacity: 1; } }
-    @keyframes ldglow { 0%, 100% { opacity: .45; transform: translate(-50%, -50%) scale(.9); } 50% { opacity: .95; transform: translate(-50%, -50%) scale(1.1); } }
-    @keyframes ldshine { 0% { background-position: 150% 0; } 55%, 100% { background-position: -50% 0; } }
+      animation: ldshine 4.6s ease-in-out infinite; }
+    @keyframes ldglow { 0%, 100% { opacity: .12; transform: translate(-50%, -50%) scale(.9); } 50% { opacity: .9; transform: translate(-50%, -50%) scale(1.1); } 84% { opacity: .75; transform: translate(-50%, -50%) scale(1.05); } 94% { opacity: .12; transform: translate(-50%, -50%) scale(.9); } }
+    @keyframes ldshine { 0%, 52% { background-position: 150% 0; } 68%, 100% { background-position: -50% 0; } }
     @media (max-width: 999px) {
-      #ld-center #ld-clogo { display: none; }
-      #ld-center #ld-clogo-w { display: block; }
-      #ld-center img { height: clamp(58px, 9vh, 78px); }
+      #ld-center { height: clamp(58px, 9vh, 78px); }
+      #ld-center .ld-set-g { display: none; }
+      #ld-center .ld-set-w { display: block; }
+      #ld-center.ld-fallback #ld-clogo { display: none; }
+      #ld-center.ld-fallback .ld-full-w { display: block; }
       #ld-center::before { background: radial-gradient(closest-side, rgba(250,204,21,.22), transparent 70%); }
       #ld-center::after { background: linear-gradient(110deg, transparent 38%, rgba(250,204,21,.95) 50%, transparent 62%) 150% 0 / 250% 100% no-repeat;
         -webkit-mask: url(/icons/logo-white.png) center / contain no-repeat; mask: url(/icons/logo-white.png) center / contain no-repeat; }
     }
-    @media (prefers-reduced-motion: reduce) { #ld-center img, #ld-center::before, #ld-center::after { animation: none !important; } }
+    @media (prefers-reduced-motion: reduce) { #ld-center .ld-ch, #ld-center::before, #ld-center::after { animation: none !important; } }
     /* /MOCK */
   </style>
 </head>
@@ -144,7 +157,12 @@
   <div id="loader" aria-busy="true">
     <img id="ld-logo" src="/icons/logo-login.png" alt="RSI" onerror="this.style.display='none'">
     <img id="ld-logo-w" src="/icons/logo-white.png" alt="RSI" onerror="this.style.display='none'">
-    <div id="ld-center" aria-hidden="true"><img id="ld-clogo" src="/icons/logo-login.png" alt=""><img id="ld-clogo-w" src="/icons/logo-white.png" alt=""></div>
+    <div id="ld-center" aria-hidden="true">
+      <div class="ld-set ld-set-g"><img class="ld-ch ld-r" src="/icons/logo-r.png" alt="" style="left:2.813%;top:7.906%;width:41.879%" onerror="document.getElementById('ld-center').classList.add('ld-fallback')"><img class="ld-ch ld-s" src="/icons/logo-s.png" alt="" style="left:39.013%;top:7.76%;width:44.586%" onerror="document.getElementById('ld-center').classList.add('ld-fallback')"><img class="ld-ch ld-i" src="/icons/logo-i.png" alt="" style="left:75.69%;top:26.647%;width:18.577%" onerror="document.getElementById('ld-center').classList.add('ld-fallback')"></div>
+      <div class="ld-set ld-set-w"><img class="ld-ch ld-r" src="/icons/logo-r-w.png" alt="" style="left:2.813%;top:7.906%;width:41.879%" onerror="document.getElementById('ld-center').classList.add('ld-fallback')"><img class="ld-ch ld-s" src="/icons/logo-s-w.png" alt="" style="left:39.013%;top:7.76%;width:44.586%" onerror="document.getElementById('ld-center').classList.add('ld-fallback')"><img class="ld-ch ld-i" src="/icons/logo-i-w.png" alt="" style="left:75.69%;top:26.647%;width:18.577%" onerror="document.getElementById('ld-center').classList.add('ld-fallback')"></div>
+      <img class="ld-ch ld-dot" src="/icons/logo-dot.png" alt="" style="left:82.378%;top:7.906%;width:14.809%" onerror="document.getElementById('ld-center').classList.add('ld-fallback')">
+      <img class="ld-full" id="ld-clogo" src="/icons/logo-login.png" alt=""><img class="ld-full ld-full-w" src="/icons/logo-white.png" alt="">
+    </div>
     <section id="ld-hero" role="status" aria-live="polite">
       <p class="ld-eyebrow" id="ld-eyebrow"></p>
       <h2 id="ld-title"></h2>
