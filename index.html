@@ -113,6 +113,30 @@
       #ld-mock .ld-phone svg { height: 34vh; max-height: 300px; width: auto; }
     }
     @media (max-height: 600px) { #ld-mock .ld-phone svg { height: 26vh; } }
+    #loader.ld-plain #ld-hero, #loader.ld-plain #ld-mock { display: none; }   /* tanpa halaman tujuan (login/refresh): hanya latar + logo + bar */
+    /* LOGO TENGAH (hanya mode login/tanpa halaman tujuan): napas pelan + cahaya berdenyut + kilau menyapu logo */
+    #ld-center { display: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -58%); }
+    #loader.ld-plain #ld-center { display: block; }
+    #loader.ld-plain #ld-logo, #loader.ld-plain #ld-logo-w { display: none !important; }
+    #ld-center img { display: block; position: relative; height: clamp(76px, 12vh, 112px); width: auto; animation: ldbreath 2.4s ease-in-out infinite; }
+    #ld-center #ld-clogo-w { display: none; }
+    #ld-center::before { content: ""; position: absolute; left: 50%; top: 50%; width: 190%; height: 280%; transform: translate(-50%, -50%); background: radial-gradient(closest-side, rgba(16,185,129,.30), transparent 70%); animation: ldglow 2.4s ease-in-out infinite; pointer-events: none; }
+    #ld-center::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(110deg, transparent 38%, rgba(255,255,255,.95) 50%, transparent 62%) 150% 0 / 250% 100% no-repeat;
+      -webkit-mask: url(/icons/logo-login.png) center / contain no-repeat; mask: url(/icons/logo-login.png) center / contain no-repeat;
+      animation: ldshine 2.4s ease-in-out infinite; }
+    @keyframes ldbreath { 0%, 100% { transform: scale(1); opacity: .88; } 50% { transform: scale(1.05); opacity: 1; } }
+    @keyframes ldglow { 0%, 100% { opacity: .45; transform: translate(-50%, -50%) scale(.9); } 50% { opacity: .95; transform: translate(-50%, -50%) scale(1.1); } }
+    @keyframes ldshine { 0% { background-position: 150% 0; } 55%, 100% { background-position: -50% 0; } }
+    @media (max-width: 999px) {
+      #ld-center #ld-clogo { display: none; }
+      #ld-center #ld-clogo-w { display: block; }
+      #ld-center img { height: clamp(58px, 9vh, 78px); }
+      #ld-center::before { background: radial-gradient(closest-side, rgba(250,204,21,.22), transparent 70%); }
+      #ld-center::after { background: linear-gradient(110deg, transparent 38%, rgba(250,204,21,.95) 50%, transparent 62%) 150% 0 / 250% 100% no-repeat;
+        -webkit-mask: url(/icons/logo-white.png) center / contain no-repeat; mask: url(/icons/logo-white.png) center / contain no-repeat; }
+    }
+    @media (prefers-reduced-motion: reduce) { #ld-center img, #ld-center::before, #ld-center::after { animation: none !important; } }
     /* /MOCK */
   </style>
 </head>
@@ -120,6 +144,7 @@
   <div id="loader" aria-busy="true">
     <img id="ld-logo" src="/icons/logo-login.png" alt="RSI" onerror="this.style.display='none'">
     <img id="ld-logo-w" src="/icons/logo-white.png" alt="RSI" onerror="this.style.display='none'">
+    <div id="ld-center" aria-hidden="true"><img id="ld-clogo" src="/icons/logo-login.png" alt=""><img id="ld-clogo-w" src="/icons/logo-white.png" alt=""></div>
     <section id="ld-hero" role="status" aria-live="polite">
       <p class="ld-eyebrow" id="ld-eyebrow"></p>
       <h2 id="ld-title"></h2>
@@ -448,7 +473,7 @@
         return o + '</svg>';
       }
       // /SCENE
-      window.rsiFillLoader = function (k) { fill(k); try { mock(String(k || '').toLowerCase()); } catch (e) {} };
+      window.rsiFillLoader = function (k) { var ld = el('loader'); if (ld) ld.classList.toggle('ld-plain', !k); fill(k); try { mock(String(k || '').toLowerCase()); } catch (e) {} };
     })();
   </script>
 
@@ -466,6 +491,7 @@
       // 1) Halaman tujuan: #halaman (keadaan terbaru) diutamakan, lalu ?page=
       var p = clean(location.hash) || clean(new URLSearchParams(location.search).get('page'));
       f.src = APP_URL + (p ? '?page=' + encodeURIComponent(p) : '');
+      window.rsiWantPage = p;   // halaman tujuan (kosong = tidak ada)
       try { window.rsiFillLoader(p); } catch (x) {}
 
       // 2) Pesan dari aplikasi: perbarui alamat luar, dan jawab alamat pembungkus
@@ -562,6 +588,14 @@
         if (!d || (d.rsi !== 'ready' && d.rsi !== 'page')) return;
         var host; try { host = new URL(e.origin).hostname; } catch (x) { return; }
         if (host !== 'script.google.com' && !/\.googleusercontent\.com$/.test(host)) return;
+        if (d.rsi === 'page') {
+          // 'page' kosong = layar login muncul sesaat saat sesi dipulihkan; 'page' lain dari halaman tujuan = jangan tutup dulu
+          // (mencegah Dashboard sempat terlihat sebelum halaman tujuan benar-benar terbuka)
+          var k = String(d.page || '').replace(/[^a-zA-Z0-9_\-]/g, '');
+          var want = window.rsiWantPage || '';
+          if (!k) return;
+          if (want && k.toLowerCase() !== want.toLowerCase()) return;
+        }
         closeOnce(100);
       });
       // Loading ditutup HANYA saat aplikasi mengirim sinyal 'ready' (layar login / halaman sudah tampil), supaya tidak ada layar putih di antaranya.
